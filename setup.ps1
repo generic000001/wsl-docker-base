@@ -49,11 +49,11 @@ if ($kernel -notmatch "WSL2") {
 }
 
 if ($VerifyOnly) {
-    Invoke-WslScript "bash scripts/verify.sh"
+    Invoke-WslScript "find scripts -name '*.sh' -exec sed -i 's/\r$//' {} + && bash scripts/verify.sh"
     exit 0
 }
 
-Invoke-WslScript "bash scripts/setup.sh"
+Invoke-WslScript "find scripts -name '*.sh' -exec sed -i 's/\r$//' {} + && bash scripts/setup.sh"
 
 Write-Host ""
 Write-Host "Restarting WSL so Docker group membership takes effect..."
@@ -64,5 +64,5 @@ if ($LASTEXITCODE -ne 0) {
 
 Start-Sleep -Seconds 2
 Write-Host "Verifying Docker installation..."
-Invoke-WslScript "bash scripts/verify.sh"
+Invoke-WslScript "find scripts -name '*.sh' -exec sed -i 's/\r$//' {} + && bash scripts/verify.sh"
 
