@@ -28,7 +28,19 @@ $distributions = @(& wsl.exe --list --quiet 2>$null) |
     Where-Object { $_ }
 
 if ($distributions -notcontains $distribution) {
-    throw "The Ubuntu distribution is not installed. Open PowerShell as Administrator and run: wsl --install --distribution Ubuntu"
+    Write-Host "Installing the '$distribution' WSL distribution..."
+    & wsl.exe --install --distribution $distribution --no-launch
+    if ($LASTEXITCODE -ne 0) {
+        throw "Ubuntu could not be installed. Open PowerShell as Administrator and run: wsl --install --distribution Ubuntu"
+    }
+
+    $distributions = @(& wsl.exe --list --quiet 2>$null) |
+        ForEach-Object { $_.Trim() } |
+        Where-Object { $_ }
+
+    if ($distributions -notcontains $distribution) {
+        throw "Ubuntu installation requires a restart. Restart Windows, then run .\setup.ps1 again."
+    }
 }
 
 $kernel = (& wsl.exe --distribution $distribution -- uname -r 2>$null) -join "`n"
@@ -53,5 +65,4 @@ if ($LASTEXITCODE -ne 0) {
 Start-Sleep -Seconds 2
 Write-Host "Verifying Docker installation..."
 Invoke-WslScript "sed -i 's/\\r$//' ./setup.sh ./verify.sh && ./verify.sh"
-
 
