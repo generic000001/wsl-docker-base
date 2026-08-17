@@ -23,9 +23,25 @@ if is_docker_installed; then
     echo "Docker is already installed; skipping Docker installation."
 else
     echo "Installing Docker..."
-    # DEBIAN_FRONTEND suppresses interactive prompts; SKIP_SLEEP avoids the
-    # 20-second advisory pause in get.docker.com without patching the script.
-    curl -fsSL https://get.docker.com | sudo DEBIAN_FRONTEND=noninteractive SKIP_SLEEP=1 sh
+
+    # Add Docker's official GPG key and apt repository, then install.
+    # This follows the official Docker docs for Ubuntu and avoids piping to sh,
+    # which can trigger advisory pauses in the convenience script.
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+        -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+    ARCH="$(dpkg --print-architecture)"
+    CODENAME="$(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")"
+    echo "deb [arch=${ARCH} signed-by=/etc/apt/keyrings/docker.asc] \
+https://download.docker.com/linux/ubuntu ${CODENAME} stable" \
+        | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    sudo apt-get update -q
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q \
+        docker-ce docker-ce-cli containerd.io \
+        docker-buildx-plugin docker-compose-plugin
 fi
 
 if ! getent group docker >/dev/null 2>&1; then
