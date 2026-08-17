@@ -53,12 +53,22 @@ The Ubuntu distribution is persistent until you explicitly delete it. To make th
 
 The command requires you to type `DELETE` and permanently removes the `Ubuntu` distribution, including installed packages, files, Docker images, containers, and volumes. Use `.\teardown.ps1 -Force` for scripted cleanup. Run `wsl --install --distribution Ubuntu` again before using `.\setup.ps1` to create a fresh environment.
 
+## Repository layout
+
+```
+.
+├── scripts/
+│   ├── setup.sh     # Installs Docker inside Ubuntu
+│   └── verify.sh    # Verifies the Docker installation
+├── setup.ps1        # Windows launcher (calls scripts/setup.sh via WSL)
+└── teardown.ps1     # Removes the Ubuntu WSL distribution
+```
+
 ## Direct WSL usage
 
-If you are already working inside Ubuntu, the original shell workflow remains available:
+If you are already working inside Ubuntu, the shell scripts can be run directly:
 
 ```bash
-chmod +x setup.sh verify.sh
-./setup.sh
-./verify.sh
+bash scripts/setup.sh
+bash scripts/verify.sh
 ```
