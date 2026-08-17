@@ -6,6 +6,12 @@ A minimal Ubuntu WSL2 environment managed as Infrastructure as Code, with a Wind
 
 - Docker Engine
 
+## Requirements
+
+- Windows 10 or 11 with WSL2 support
+- An Ubuntu distribution named `Ubuntu`
+- Administrator access for the initial WSL installation
+
 ## Setup from Windows
 
 Install WSL and Ubuntu once, if they are not already installed. Open PowerShell as Administrator and run:
@@ -34,6 +40,8 @@ The launcher automatically restarts WSL so the Docker group membership takes eff
 ```
 
 The launcher checks that WSL and the `Ubuntu` distribution are installed and running as WSL2. If either prerequisite is missing, it prints the exact command needed to fix it.
+
+The setup can be run again safely. It updates Ubuntu, installs required prerequisites, skips Docker installation when Docker is already available, and verifies Docker with the `hello-world` container. `-VerifyOnly` performs only the verification step and does not install or update anything.
 
 ## Direct WSL usage
 
