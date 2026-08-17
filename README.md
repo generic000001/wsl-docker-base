@@ -9,15 +9,15 @@ A minimal Ubuntu WSL2 environment managed as Infrastructure as Code, with a Wind
 ## Requirements
 
 - Windows 10 or 11 with WSL2 support
-- An Ubuntu distribution named `Ubuntu`
+- The Windows Subsystem for Linux (WSL)
 - Administrator access for the initial WSL installation
 
 ## Setup from Windows
 
-Install WSL and Ubuntu once, if they are not already installed. Open PowerShell as Administrator and run:
+Install WSL once, if it is not already installed. Open PowerShell as Administrator and run:
 
 ```powershell
-wsl --install --distribution Ubuntu
+wsl --install
 ```
 
 Restart Windows if prompted. Then clone this repository from PowerShell:
@@ -39,9 +39,19 @@ The launcher automatically restarts WSL so the Docker group membership takes eff
 .\setup.ps1 -VerifyOnly
 ```
 
-The launcher checks that WSL and the `Ubuntu` distribution are installed and running as WSL2. If either prerequisite is missing, it prints the exact command needed to fix it.
+The launcher checks that WSL and the `Ubuntu` distribution are installed and running as WSL2. If Ubuntu is missing, it installs the distribution automatically. The first installation may require a restart; run the launcher again afterward.
 
 The setup can be run again safely. It updates Ubuntu, installs required prerequisites, skips Docker installation when Docker is already available, and verifies Docker with the `hello-world` container. `-VerifyOnly` performs only the verification step and does not install or update anything.
+
+## Dispose of the environment
+
+The Ubuntu distribution is persistent until you explicitly delete it. To make the environment disposable, run this from PowerShell:
+
+```powershell
+.\teardown.ps1
+```
+
+The command requires you to type `DELETE` and permanently removes the `Ubuntu` distribution, including installed packages, files, Docker images, containers, and volumes. Use `.\teardown.ps1 -Force` for scripted cleanup. Run `wsl --install --distribution Ubuntu` again before using `.\setup.ps1` to create a fresh environment.
 
 ## Direct WSL usage
 
